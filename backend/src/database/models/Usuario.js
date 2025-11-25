@@ -2,19 +2,34 @@ const db = require("../connection");
 
 module.exports = {
   async buscarPorEmail(email) {
-    const [rows] = await db.query(
-      "SELECT * FROM usuarios WHERE email = ?",
-      [email]
-    );
-    return rows[0];
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM usuarios WHERE email = ?",
+        [email]
+      );
+      return rows[0] || null; 
+    } catch (error) {
+      console.error("Erro ao buscar usuário por email:", error);
+      throw error;
+    }
   },
 
   async criar({ nome, email, senhaHash }) {
-    const [result] = await db.query(
-      "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
-      [nome, email, senhaHash]
-    );
+    try {
+      const [result] = await db.query(
+        "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
+        [nome, email, senhaHash]
+      );
 
-    return result.insertId;
+      return {
+        id: result.insertId,
+        nome,
+        email
+      };
+    } catch (error) {
+      console.error("Erro ao criar usuário:", error);
+      throw error;
+    }
   }
 };
+
