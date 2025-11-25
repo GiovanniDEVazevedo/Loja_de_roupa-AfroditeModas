@@ -1,7 +1,7 @@
 const db = require("../connection")
 
 module.exports = {
-    async listar() {
+    async buscarTodos() {
         const [rows] = await db.query("SELECT * FROM produtos")
         return rows;
     },
