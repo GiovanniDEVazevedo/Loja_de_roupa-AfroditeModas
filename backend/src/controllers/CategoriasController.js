@@ -56,8 +56,24 @@ module.exports = {
             return res.status(200).json({mensagem: "Categoria atualizada com sucesso ;)"})
         } catch (error) {
             console.error("Erro ao atualizar")
-            return res.status(500).json({})
+            return res.status(500).json({erro: "erro interno no servidor "})
             
         }
+    },
+    async deletarCategoria(req, res) {
+        try {
+            const { id } = req.params 
+            
+            const sucesso = await Categorias.deletar(id)
+            if (!sucesso) {
+                return res.status(404).json({ erro: "Erro categoria não encontrada" })
+                
+            }
+            return res.status(200).json({mensagem:"categoria Deletada com sucesso"})
+        } catch (error) {
+            console.error("erro ao deletar categoria", error)
+            return res.status(500).json({erro: "Erro interno do servidor"})
+            
+      } 
     }
 }
