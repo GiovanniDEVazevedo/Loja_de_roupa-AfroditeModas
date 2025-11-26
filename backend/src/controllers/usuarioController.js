@@ -1,35 +1,85 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const Usuarios = require("../database/models/Usuario");
 
+// chave secreta do JWT (ideal colocar no .env)
+const JWT_SECRET = process.env.JWT_SECRET
+
 module.exports = {
-    async verificarEmail(req, res) {
+    
+    // ================================
+    //     CADASTRO DE USUÁRIO
+    // ================================
+    async registrar(req, res) {
         try {
-            // 1. Pega o email enviado pelo front
-            const { email } = req.body;
+            const { nome, email, senha } = req.body;
 
-            // 2. Validação básica
-            if (!email) {
-                return res.status(400).json({ erro: "Email não enviado." });
+            // 1. verificar se o email já existe
+            const usuarioExistente = await Usuarios.buscarPorEmail(email);
+            if (usuarioExistente) {
+                return res.status(400).json({ erro: "Email já cadastrado" });
             }
 
-            // 3. Consulta no banco
-            const usuario = await Usuarios.buscarPorEmail(email);
+            // 2. gerar o hash da senha
+            const senhaHash = await bcrypt.hash(senha, 10);
 
-            // 4. Caso não exista
-            if (!usuario) {
-                return res.status(404).json({ existe: false });
-            }
+            // 3. criar o usuário
+            const novoUsuario = await Usuarios.criar({ nome, email, senhaHash });
 
-            // 5. Caso exista
-            return res.status(200).json({
-                existe: true,
-                id: usuario.id,
-                nome: usuario.nome,
-                email: usuario.email
+            return res.status(201).json({
+                mensagem: "Usuário cadastrado com sucesso",
+                usuario: novoUsuario
             });
 
         } catch (error) {
-            console.error("Erro no controller verificarEmail:", error);
+            console.error("Erro no registro:", error);
+            return res.status(500).json({ erro: "Erro interno no servidor" });
+        }
+    },
+
+    // ================================
+    //            LOGIN
+    // ================================
+    async login(req, res) {
+        try {
+            const { email, senha } = req.body;
+
+            // 1. buscar usuário pelo email
+            const usuario = await Usuarios.buscarPorEmail(email);
+            if (!usuario) {
+                return res.status(400).json({ erro: "Email ou senha incorretos" });
+            }
+
+            // 2. comparar senha digitada com senha do banco
+            const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+            if (!senhaCorreta) {
+                return res.status(400).json({ erro: "Email ou senha incorretos" });
+            }
+
+            // 3. gerar token JWT
+            const token = jwt.sign(
+                {
+                    id: usuario.id,
+                    nome: usuario.nome,
+                    email: usuario.email
+                },
+                JWT_SECRET,
+                { expiresIn: "7d" } // expira em 7 dias
+            );
+
+            return res.json({
+                mensagem: "Login realizado com sucesso",
+                usuario: {
+                    id: usuario.id,
+                    nome: usuario.nome,
+                    email: usuario.email
+                },
+                token
+            });
+
+        } catch (error) {
+            console.error("Erro no login:", error);
             return res.status(500).json({ erro: "Erro interno no servidor" });
         }
     }
-}
+};
