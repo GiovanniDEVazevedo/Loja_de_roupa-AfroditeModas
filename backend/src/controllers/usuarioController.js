@@ -1,11 +1,11 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const Usuarios = require("../database/models/Usuario");
+import bcrypt from "bcrypt";
+import jwt  from "jsonwebtoken";
+import Usuarios from"../database/models/Usuario.js";
 
 // chave secreta do JWT (ideal colocar no .env)
 const JWT_SECRET = process.env.JWT_SECRET
 
-module.exports = {
+export default  {
     
     // ================================
     //     CADASTRO DE USUÁRIO

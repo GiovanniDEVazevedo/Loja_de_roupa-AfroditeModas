@@ -4,18 +4,18 @@ import CategoriasController from "../controllers/CategoriasController.js";
 const router = Router();
 
 // Listar todas categorias
-router.get("/", CategoriasController.listarTodas);
+router.get("/", CategoriasController.ListarCategorias);
 
 // Buscar uma categoria pelo ID
-router.get("/:id", CategoriasController.buscarPorId);
+router.get("/:id", CategoriasController.buscarIdCategoria);
 
 // Criar nova categoria
-router.post("/", CategoriasController.criar);
+router.post("/", CategoriasController.criarCategoria);
 
 // Atualizar categoria
-router.put("/:id", CategoriasController.atualizar);
+router.put("/:id", CategoriasController.atualizarCategorias);
 
 // Deletar categoria
-router.delete("/:id", CategoriasController.deletar);
+router.delete("/:id", CategoriasController.deletarCategoria);
 
 export default router;

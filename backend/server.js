@@ -5,9 +5,9 @@ import dotenv from "dotenv";
 import db from "./src/database/connection.js";
 
 // Import das rotas
-import usuarioRoutes from "./src/routes/usuarioRoutes.js";
-import categoriaRoutes from "./src/routes/categoriaRoutes.js";
-import produtoRoutes from "./src/routes/produtoRoutes.js";
+import usuarioRoutes from "./src/routes/usuariosRoutes.js";
+import categoriaRoutes from "./src/routes/categoriasRoutes.js";
+import produtoRoutes from "./src/routes/produtosRoutes.js";
 
 dotenv.config();
 

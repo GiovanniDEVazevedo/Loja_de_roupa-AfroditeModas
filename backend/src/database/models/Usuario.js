@@ -1,6 +1,6 @@
-const db = require("../connection");
+import db from "../connection.js";
 
-module.exports = {
+export default  {
   async buscarPorEmail(email) {
     try {
       const [rows] = await db.query(

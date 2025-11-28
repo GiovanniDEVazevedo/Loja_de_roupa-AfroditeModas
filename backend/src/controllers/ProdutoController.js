@@ -1,7 +1,7 @@
-const produto = require("../database/models/produto")
-const Produto = require("../database/models/produto")
 
-module.exports = {
+import Produto from"../database/models/produto.js"
+
+  export default {
   listarProdutos: async (req, res) => {
     try {
       const produtos = await Produto.buscarTodos();

@@ -1,7 +1,7 @@
-const categoria = require("../database/models/categoria")
-const Categorias = require("../database/models/categoria") 
 
-module.exports = {
+import Categorias from "../database/models/categoria.js" 
+
+export default  {
     async ListarCategorias(req, res) {
         try {
             const categorias = await Categorias.listar()
@@ -32,7 +32,7 @@ module.exports = {
             if (!nome) {
                 return res.status(400).json({erro: "Erro Nome da categoria e obrigatorio"})
             }
-            const nova = await categoria.criar(nome)
+            const nova = await Categoria.criar(nome)
             return res.status(201).json(nova)
 
             
@@ -49,7 +49,7 @@ module.exports = {
                 return res.status(400).json({ erro: "O nome é Obrigatorio" })
                 
             }
-            const sucesso = await categoria.atualizar(id, nome)
+            const sucesso = await Categoria.atualizar(id, nome)
             if (!sucesso) {
                 return res.status(404).json({erro:"Erro categoria nao encontrada"})
             }
