@@ -42,16 +42,27 @@ import Produto from"../database/models/produto.js"
     },
     async criarProduto(req, res) {
         try {
-            const { nome, preco, descricao, categoria, imagem_url } = req.body
+            const { nome, preco, descricao,imagem_url , estoque, categoria } = req.body
         if (!nome || !preco) {
-             return res.status(400).json({erro: "Nome e preço são obrigatorios"})
+          return res.status(400).json({
+            erro: "Nome e preço são obrigatorios",
+               erros:{
+            nome,
+            preco,
+            descricao,
+            imagem_url,
+            estoque,
+            categoria,
+        }
+             })
         }
         const novoproduto = await Produto.criar({
             nome,
             preco,
             descricao,
-            categoria,
             imagem_url,
+            estoque,
+            categoria,
         })
         return res.status(201).json(novoproduto)
         } catch (erro) {

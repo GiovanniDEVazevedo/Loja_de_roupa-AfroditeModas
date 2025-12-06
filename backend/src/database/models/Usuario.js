@@ -14,17 +14,18 @@ export default  {
     }
   },
 
-  async criar({ nome, email, senhaHash }) {
+  async criar({ nome, email, senhaHash, cargo = "user" }) {
     try {
       const [result] = await db.query(
-        "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
-        [nome, email, senhaHash]
+        "INSERT INTO usuarios (nome, email, senha, cargo) VALUES (?, ?, ?, ?)",
+        [nome, email, senhaHash, cargo]
       );
 
       return {
         id: result.insertId,
         nome,
-        email
+        email,
+        cargo
       };
     } catch (error) {
       console.error("Erro ao criar usuário:", error);

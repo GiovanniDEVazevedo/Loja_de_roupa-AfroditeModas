@@ -1,5 +1,6 @@
 import { Router } from "express";
 import ProdutoController from "../controllers/ProdutoController.js";
+import admin from "../middlewares/admin.js";
 
 const router = Router();
 
@@ -10,12 +11,12 @@ router.get("/", ProdutoController.listarProdutos);
 router.get("/:id", ProdutoController.buscarID);
 
 // Criar produto (ADM)
-router.post("/", ProdutoController.criarProduto);
+router.post("/criar",admin, ProdutoController.criarProduto);
 
 // Atualizar produto (ADM)
-router.put("/:id", ProdutoController.atualizarProduto);
+router.put("/:id",admin, ProdutoController.atualizarProduto);
 
 // Deletar produto (ADM)
-router.delete("/:id", ProdutoController.deletar);
+router.delete("/:id",admin, ProdutoController.deletar);
 
 export default router;

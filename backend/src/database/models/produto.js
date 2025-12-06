@@ -11,7 +11,7 @@ import db from "../connection.js"
     },
     async criar(produto) {
         const { nome, descricao, preco, estoque, imagem_url, categoria } = produto
-        const [result] = await db.query("INSERT INTO produtos (nome, descricao, preco, estoque, imagem_url, categoria) VALUES (?, ?, ?, ?, ?, ?)", [nome, descricao, preco, estoque, imagem_url, categoria])
+        const [result] = await db.query("INSERT INTO produtos (nome, preco, descricao, imagem_url, estoque,  categoria) VALUES (?, ?, ?, ?, ?, ?)", [nome, preco, descricao,   imagem_url, estoque, categoria])
         return result.insertId
     },
     async atualizar(id, produto) {
@@ -19,9 +19,9 @@ import db from "../connection.js"
 
     await db.query(
       `UPDATE produtos 
-       SET nome=?, descricao=?, preco=?, estoque=?, imagem=?, categoria_id=? 
+       SET nome=?, descricao=?, preco=?, imagem_url=? ,estoque=? , categoria=? 
        WHERE id=?`,
-      [nome, descricao, preco, estoque, imagem_url, categoria, id]
+      [nome, descricao, preco,  imagem_url, estoque, categoria, id]
     );
 
     return true;

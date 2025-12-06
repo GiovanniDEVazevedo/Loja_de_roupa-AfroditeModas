@@ -1,41 +1,64 @@
 import bcrypt from "bcrypt";
 import jwt  from "jsonwebtoken";
-import Usuarios from"../database/models/Usuario.js";
+import Usuarios from "../database/models/Usuario.js";
+import dotenv from "dotenv"
 
+dotenv.config()
 // chave secreta do JWT (ideal colocar no .env)
 const JWT_SECRET = process.env.JWT_SECRET
 
-export default  {
+export default {
     
     // ================================
     //     CADASTRO DE USUÁRIO
     // ================================
     async registrar(req, res) {
+        
         try {
-            const { nome, email, senha } = req.body;
+            const { nome, email, senha, cargo } = req.body;
+            
 
-            // 1. verificar se o email já existe
+            // cargo padrão = user
+            const cargoFinal = cargo === "admin" ? "admin" : "user";
+
+            // verificar email existente
             const usuarioExistente = await Usuarios.buscarPorEmail(email);
             if (usuarioExistente) {
-                return res.status(400).json({ erro: "Email já cadastrado" });
+                return res.status(400).json({
+                    erro: "Email já cadastrado",
+                    Email: usuarioExistente
+                 });
             }
 
-            // 2. gerar o hash da senha
+            // gerar hash da senha
             const senhaHash = await bcrypt.hash(senha, 10);
-
-            // 3. criar o usuário
-            const novoUsuario = await Usuarios.criar({ nome, email, senhaHash });
+            
+            // criar usuário
+            const novoUsuario = await Usuarios.criar({
+                nome,
+                email,
+                senhaHash,
+                cargo: cargoFinal
+            });
 
             return res.status(201).json({
                 mensagem: "Usuário cadastrado com sucesso",
-                usuario: novoUsuario
+                novoUsuario: {
+                    nome,
+                    email,
+                    cargo: cargoFinal
+                }
             });
 
         } catch (error) {
-            console.error("Erro no registro:", error);
-            return res.status(500).json({ erro: "Erro interno no servidor" });
+        
+            return res.status(500).json({
+                erro: "Erro interno no serv0000idor"
+                
+             });
         }
     },
+
 
     // ================================
     //            LOGIN
@@ -44,27 +67,26 @@ export default  {
         try {
             const { email, senha } = req.body;
 
-            // 1. buscar usuário pelo email
             const usuario = await Usuarios.buscarPorEmail(email);
             if (!usuario) {
                 return res.status(400).json({ erro: "Email ou senha incorretos" });
             }
 
-            // 2. comparar senha digitada com senha do banco
-            const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-            if (!senhaCorreta) {
+            const senhaOk = await bcrypt.compare(senha, usuario.senha);
+            if (!senhaOk) {
                 return res.status(400).json({ erro: "Email ou senha incorretos" });
             }
 
-            // 3. gerar token JWT
+            // gerar token
             const token = jwt.sign(
                 {
                     id: usuario.id,
                     nome: usuario.nome,
-                    email: usuario.email
+                    email: usuario.email,
+                    cargo: usuario.cargo   // <- importante
                 },
                 JWT_SECRET,
-                { expiresIn: "7d" } // expira em 7 dias
+                { expiresIn: "7d" }
             );
 
             return res.json({
@@ -72,14 +94,15 @@ export default  {
                 usuario: {
                     id: usuario.id,
                     nome: usuario.nome,
-                    email: usuario.email
+                    email: usuario.email,
+                    cargo: usuario.cargo
                 },
                 token
             });
 
         } catch (error) {
             console.error("Erro no login:", error);
-            return res.status(500).json({ erro: "Erro interno no servidor" });
+            return res.status(500).json({ erro: "Erro interno no servidor login" });
         }
     }
-};
+}
