@@ -2,6 +2,7 @@ import { createContext, useState, useContext } from "react";
 
 const CartContext = createContext()
 
+
 // eslint-disable-next-line react/prop-types
 export function CartProvider({ children }) {
     const [cart, setCart] = useState([])
@@ -35,8 +36,8 @@ export function CartProvider({ children }) {
         </CartContext.Provider>
     )
 }
-// eslint-disable-next-line react-refresh/only-export-components
-export function useCart() {
+
+export function UseCart() {
         return useContext(CartContext)
     }
     

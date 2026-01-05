@@ -1,7 +1,7 @@
 import db from"../connection.js";
 
 export default  {
-  async buscarTodas() {
+  async listar() {
     const [rows] = await db.query("SELECT * FROM categorias");
     return rows;
   },

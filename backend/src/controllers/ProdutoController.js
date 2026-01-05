@@ -42,7 +42,7 @@ import Produto from"../database/models/produto.js"
     },
     async criarProduto(req, res) {
         try {
-            const { nome, preco, descricao,imagem_url , estoque, categoria } = req.body
+            const { nome, preco, descricao,  estoque, categoria } = req.body
         if (!nome || !preco) {
           return res.status(400).json({
             erro: "Nome e preço são obrigatorios",
@@ -50,24 +50,29 @@ import Produto from"../database/models/produto.js"
             nome,
             preco,
             descricao,
-            imagem_url,
+            
             estoque,
             categoria,
         }
              })
-        }
+          }
+          const imagem_url = req.file
+          if (!imagem_url) {
+            return res.status(400).json({erro: "imagem obrigatória"})
+          }
+          const imagem = `/uploads/produtos/${imagem_url.filename}`
         const novoproduto = await Produto.criar({
             nome,
-            preco,
             descricao,
-            imagem_url,
+            preco,
             estoque,
+            imagem_url: imagem,
             categoria,
         })
         return res.status(201).json(novoproduto)
         } catch (erro) {
             console.error("Erro ao criar produto:", erro)
-            return res.status(500).json({ erro: "erro ao criar produto" })
+            return res.status(500).json({ erro: "erro ao criar produto!!!!" })
 
     }   
     },
@@ -77,7 +82,7 @@ import Produto from"../database/models/produto.js"
             const dados = req.body
             const produtoExistente = await Produto.buscarPorId(id)
             if (!produtoExistente) {
-                return res.status(404).json({erro: "produto nao encontrado"})
+                return res.status(404).json({erro: "produto nao encontrado000"})
             }
             const produtoAtualizado = await Produto.atualizar(id, dados)
             return res.json(produtoAtualizado)
@@ -93,7 +98,7 @@ import Produto from"../database/models/produto.js"
       const produto = await Produto.buscarPorId(id);
 
       if (!produto) {
-        return res.status(404).json({ erro: "Produto não encontrado" });
+        return res.status(404).json({ erro: "Produto não encontrado111" });
       }
 
       await Produto.deletar(id);

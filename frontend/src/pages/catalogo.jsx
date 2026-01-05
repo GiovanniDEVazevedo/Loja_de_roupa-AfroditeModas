@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useCart } from "../context/CartContext";
+import { UseCart } from "../context/CartContext";
 
 export default function Catalogo() {
     const [produtos, setProduto] = useState([])
     const [loading, setLoading] = useState(true)
-    const {addtocart}= useCart()
+    const { AddTocart } = UseCart()
     useEffect(() => {
         async function CarregarProdutos() {
             try {
-                const resposta = await fetch("http://localhost:3001/produtos")
+                const resposta = await fetch("http://localhost:3001/produtos/listar")
                 const dados = await resposta.json()
                 setProduto(dados)
             } catch(error) {
@@ -26,11 +26,11 @@ export default function Catalogo() {
             <div className="cardFromProduct">
                 {produtos.map(prod => (
                     <div key={prod.id}>
-                        <img src={prod.imagem_url} alt={prod.nome} />
+                        <img src={`http://localhost:3001${prod.imagem_url}`} alt={prod.nome} />
                         <h3>{prod.nome}</h3>
                         <p>{prod.descricao}</p>
                         <strong>R${prod.preco}</strong>
-                        <button onClick={addtocart}>adicionar em carrinho</button>
+                        <button onClick={()=>AddTocart(prod)}>adicionar em carrinho</button>
                      </div>
                  ))}
             </div>

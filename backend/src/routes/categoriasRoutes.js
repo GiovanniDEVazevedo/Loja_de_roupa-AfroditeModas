@@ -8,13 +8,13 @@ const router = Router();
 router.get("/", admin,CategoriasController.ListarCategorias);
 
 // Buscar uma categoria pelo ID
-router.get("/:id", CategoriasController.buscarIdCategoria);
+router.get("/buscar/:id", CategoriasController.buscarIdCategoria);
 
 // Criar nova categoria
-router.post("/",admin, CategoriasController.criarCategoria);
+router.post("/criar",admin, CategoriasController.criarCategoria);
 
 // Atualizar categoria
-router.put("/:id",admin, CategoriasController.atualizarCategorias);
+router.put("/buscar/:id",admin, CategoriasController.atualizarCategorias);
 
 // Deletar categoria
 router.delete("/:id",admin, CategoriasController.deletarCategoria);

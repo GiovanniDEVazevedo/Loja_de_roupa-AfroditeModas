@@ -9,9 +9,9 @@ import db from "../connection.js"
         const [rows] = await db.query("SELECT * FROM produtos WHERE id = ?", [id])
         return rows[0]
     },
-    async criar(produto) {
-        const { nome, descricao, preco, estoque, imagem_url, categoria } = produto
-        const [result] = await db.query("INSERT INTO produtos (nome, preco, descricao, imagem_url, estoque,  categoria) VALUES (?, ?, ?, ?, ?, ?)", [nome, preco, descricao,   imagem_url, estoque, categoria])
+    async criar(produtos) {
+        const { nome, descricao, preco, estoque, imagem_url, categoria } = produtos
+        const [result] = await db.query("INSERT INTO produtos (nome, preco, descricao, imagem_url, estoque,  categoria) VALUES (?, ?, ?, ?, ?, ?)", [nome, preco, descricao,imagem_url, estoque, categoria])
         return result.insertId
     },
     async atualizar(id, produto) {

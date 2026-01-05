@@ -104,5 +104,7 @@ export default {
             console.error("Erro no login:", error);
             return res.status(500).json({ erro: "Erro interno no servidor login" });
         }
-    }
+    },
+    
+
 }

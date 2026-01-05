@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./admin.css"
 
 export default function Admin() {
+    
     const navigate = useNavigate();
     const [usuario, setUsuario] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
 
-        if (!token) {
+        if(!token) {
             alert("Você precisa estar logado");
             navigate("/login");
             return;
@@ -31,12 +33,12 @@ export default function Admin() {
     if (!usuario) return <p>Carregando...</p>;
 
     return (
-        <div>
+        <div className="content">
             <h1>Painel Administrativo</h1>
             <p>Bem-vindo, {usuario.nome}!</p>
 
             <hr />
-
+        <div className="opcoes">
             <h2>O que você deseja gerenciar?</h2>
 
             <ul>
@@ -51,7 +53,8 @@ export default function Admin() {
                 <li onClick={() => navigate("/admin/usuarios")}>
                     Gerenciar Usuários
                 </li>
-            </ul>
+                </ul>
+            </div>
         </div>
     );
 }

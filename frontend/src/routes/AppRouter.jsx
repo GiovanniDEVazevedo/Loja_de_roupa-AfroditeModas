@@ -1,30 +1,52 @@
-import { createBrowserRouter } from "react-router-dom";
-import Carrinho from "../pages/carrinho"
-import Catalogo from "../pages/catalogo";
-import Admin from "../pages/Admin";
-import Login from "../pages/login";
-import Cadastro from "../pages/cadastro";
-const AppRoutes = createBrowserRouter([
-    {
-        path: "/catalogo",
-        element: <Catalogo/>
-    },
-    {
-        path: "/carrinho",
-        element: <Carrinho/>
-    },
-    {
-        path: "/admin",
-        element: <Admin/>
-    },
-    {
-        path: "/login",
-        element: <Login/>
-    },
-    {
-        path: "/cadastro",
-        element:<Cadastro/>
-    }
+import {  Routes, Route } from "react-router-dom";
 
-])
-export default AppRoutes
+import AdminRoute from "./AdminRoute";
+
+import Login from "../pages/login.jsx";
+import Catalogo from "../pages/catalogo.jsx";
+import Admin from "../pages/admins/Admin.jsx";
+import Produtos from "../pages/admins/AdicionarProdutos.jsx"
+import Categorias from "../pages/admins/AddCategorias.jsx"
+import { CartProvider } from "../context/CartContext.jsx";
+
+
+export default function AppRoutes() {
+  return (
+    
+      <Routes>
+        <Route path="/login" element={<Login />} />
+      <Route path="/" element={
+        <CartProvider>
+<Catalogo />
+        </CartProvider>
+        
+      } />
+        
+
+        {/* Rotas protegidas */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+      />
+      <Route
+        path="/admin/produtos"
+        element={
+            <Produtos/>
+        }
+      />
+      <Route
+        path="/admin/categorias"
+        element={
+          <Categorias/>
+        }
+      />
+
+       
+      </Routes>
+  
+  );
+}

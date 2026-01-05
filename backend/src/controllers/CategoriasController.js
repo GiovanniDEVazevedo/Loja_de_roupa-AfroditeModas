@@ -8,7 +8,7 @@ export default  {
             return res.status(200).json(categorias)
         } catch (error) {
             console.error("Erro ao listar categorias:", error)    
-            return res.status(500).json({erro:"Erro ao listar categorias"})
+            return res.status(500).json({erro:"Erro ao listar categorias!!"})
         }
     },
     async buscarIdCategoria(req, res) {
@@ -32,7 +32,7 @@ export default  {
             if (!nome) {
                 return res.status(400).json({erro: "Erro Nome da categoria e obrigatorio"})
             }
-            const nova = await Categoria.criar(nome)
+            const nova = await Categorias.criar(nome)
             return res.status(201).json(nova)
 
             
@@ -49,7 +49,7 @@ export default  {
                 return res.status(400).json({ erro: "O nome é Obrigatorio" })
                 
             }
-            const sucesso = await Categoria.atualizar(id, nome)
+            const sucesso = await Categorias.atualizar(id, nome)
             if (!sucesso) {
                 return res.status(404).json({erro:"Erro categoria nao encontrada"})
             }

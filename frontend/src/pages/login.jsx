@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { UseAuth } from "../context/AuthContext";
+
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
-
+    const navigate = useNavigate()
+    const {login}= UseAuth()
     async function handleLogin(e) {
         e.preventDefault();
 
@@ -23,8 +27,14 @@ export default function Login() {
 
             // salvar token no localStorage
             localStorage.setItem("token", dados.token);
-
+            login(dados.usuario)
             alert("Login realizado!");
+            if(dados.usuario.cargo === "admin"){
+             navigate("/admin")
+            } else {
+                navigate("/")
+            }
+            return <Navigate to={"/"} replace/>
         } catch (error) {
             console.error("Erro no login:", error);
         }
