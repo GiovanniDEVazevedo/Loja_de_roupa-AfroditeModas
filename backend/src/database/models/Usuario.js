@@ -1,37 +1,31 @@
-import db from "../connection.js";
+import pool from "../connection.js";
 
-export default  {
-  async buscarPorEmail(email) {
-    try {
-      const [rows] = await db.query(
-        "SELECT * FROM usuarios WHERE email = ?",
-        [email]
-      );
-      return rows[0] || null; 
-    } catch (error) {
-      console.error("Erro ao buscar usuário por email:", error);
-      throw error;
-    }
-  },
-
-  async criar({ nome, email, senhaHash, cargo = "user" }) {
-    try {
-      const [result] = await db.query(
-        "INSERT INTO usuarios (nome, email, senha, cargo) VALUES (?, ?, ?, ?)",
-        [nome, email, senhaHash, cargo]
-      );
-
-      return {
-        id: result.insertId,
-        nome,
-        email,
-        cargo
-      };
-    } catch (error) {
-      console.error("Erro ao criar usuário:", error);
-      throw error;
-    }
+class Usuario {
+  static async criar(Usuario) {
+    const { nome, email, senha, cargo } = Usuario
+    const { rows } = await pool.query(
+      `
+      INSERT INTO produtos(nome, email, senha, cargo)
+      VALUES($1, $2, $3, $4)
+      RETURNING *
+      `, 
+      [nome, email, senha, cargo]
+    )
+    return rows[0]
   }
-  
-};
-
+  static async buscarPorEmail(email) {
+    const { rows } = await pool.query(
+      "SELECT * FROM usuarios WHERE email = $1", 
+      [email]
+    )
+    return rows[0]
+  }
+  static async buscarPorID(id) {
+    const { rows } = await pool.query(
+      "SELECT id, nome, email, cargo FROM usuarios WHERE id = $1",
+      [id]
+    )
+    return rows[0]
+  }
+}
+export default Usuario

@@ -1,32 +1,25 @@
-import db from"../connection.js";
+import pool from"../connection.js";
 
-export default  {
-  async listar() {
-    const [rows] = await db.query("SELECT * FROM categorias");
-    return rows;
-  },
-
-  async buscarPorId(id) {
-    const [rows] = await db.query("SELECT * FROM categorias WHERE id = ?", [id]);
-    return rows[0] || null;
-  },
-
-  async criar(nome) {
-    const [result] = await db.query("INSERT INTO categorias (nome) VALUES (?)", [nome]);
-    return { id: result.insertId, nome };
-  },
-
-  async atualizar(id, nome) {
-    const [result] = await db.query(
-      "UPDATE categorias SET nome = ? WHERE id = ?",
-      [nome, id]
-    );
-
-    return result.affectedRows > 0;
-  },
-
-  async deletar(id) {
-    const [result] = await db.query("DELETE FROM categorias WHERE id = ?", [id]);
-    return result.affectedRows > 0;
+class Categoria{
+  static async listar() {
+    const { rows } = await pool.query(
+      "SELECT * FROM categorias ORDER BY nome"
+    )
+    return rows
+  }
+  static async criar(nome) {
+    const { rows } = await pool.query(
+      "INSERT INTO categorias (nome) VALUES ($1) RETURNING *",
+      [nome]  
+    )
+    return rows[0]
+  }
+  static async buscarPorid(id) {
+    const { rows } = await pool.query(
+      "SELECT * FROM categorias WHERE id = $1",
+      [id]
+    )
+    return rows[0]
   }
 }
+export default Categoria
