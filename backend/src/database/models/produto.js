@@ -12,7 +12,7 @@ class Produto {
     )
     return rows
   }
-  static async buscarPorID(id) {
+  static async buscarPorId(id) {
     const { rows } = await pool.query(
       "SELECT * FROM produtos WHERE id = $1",
       [id]

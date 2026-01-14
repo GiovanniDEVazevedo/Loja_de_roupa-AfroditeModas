@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt  from "jsonwebtoken";
 import Usuarios from "../database/models/Usuario.js";
 import dotenv from "dotenv"
+import AppError from "../errors/AppError.js";
 
 dotenv.config()
 // chave secreta do JWT (ideal colocar no .env)
@@ -13,68 +14,53 @@ export default {
     //     CADASTRO DE USUÁRIO
     // ================================
     async registrar(req, res) {
-        
-        try {
-            const { nome, email, senha, cargo } = req.body;
-            
+  const { nome, email, senha } = req.body;
 
-            // cargo padrão = user
-            const cargoFinal = cargo === "admin" ? "admin" : "user";
+  if (!nome || nome.trim().length < 3) {
+    return badRequest(res, "Nome inválido");
+  }
 
-            // verificar email existente
-            const usuarioExistente = await Usuarios.buscarPorEmail(email);
-            if (usuarioExistente) {
-                return res.status(400).json({
-                    erro: "Email já cadastrado",
-                    Email: usuarioExistente
-                 });
-            }
+  if (!email || !email.includes("@")) {
+    return badRequest(res, "Email inválido");
+  }
 
-            // gerar hash da senha
-            const senhaHash = await bcrypt.hash(senha, 10);
-            
-            // criar usuário
-            const novoUsuario = await Usuarios.criar({
-                nome,
-                email,
-                senhaHash,
-                cargo: cargoFinal
-            });
+  if (!senha || senha.length < 6) {
+    return badRequest(res, "Senha fraca");
+  }
 
-            return res.status(201).json({
-                mensagem: "Usuário cadastrado com sucesso",
-                novoUsuario: {
-                    nome,
-                    email,
-                    cargo: cargoFinal
-                }
-            });
+  const usuarioExistente = await Usuarios.buscarPorEmail(email);
+  if (usuarioExistente) {
+    return badRequest(res, "Email já cadastrado");
+  }
 
-        } catch (error) {
-        
-            return res.status(500).json({
-                erro: "Erro interno no serv0000idor"
-                
-             });
-        }
-    },
+  const senhaHash = await bcrypt.hash(senha, 10);
+
+  const novoUsuario = await Usuarios.criar({
+    nome: nome.trim(),
+    email: email.toLowerCase(),
+    senhaHash,
+    cargo: "user"
+  });
+
+  return created(res, novoUsuario);
+},
 
 
     // ================================
     //            LOGIN
     // ================================
     async login(req, res) {
-        try {
+        
             const { email, senha } = req.body;
 
             const usuario = await Usuarios.buscarPorEmail(email);
             if (!usuario) {
-                return res.status(400).json({ erro: "Email ou senha incorretos" });
+                throw new AppError("Email ou senha incorretos", 400);
             }
 
             const senhaOk = await bcrypt.compare(senha, usuario.senha);
             if (!senhaOk) {
-                return res.status(400).json({ erro: "Email ou senha incorretos" });
+                throw new AppError("Email ou senha incorretos", 400)
             }
 
             // gerar token
@@ -86,7 +72,7 @@ export default {
                     cargo: usuario.cargo   // <- importante
                 },
                 JWT_SECRET,
-                { expiresIn: "7d" }
+                { expiresIn: "1d" }
             );
 
             return res.json({
@@ -100,10 +86,7 @@ export default {
                 token
             });
 
-        } catch (error) {
-            console.error("Erro no login:", error);
-            return res.status(500).json({ erro: "Erro interno no servidor login" });
-        }
+        
     },
     
 

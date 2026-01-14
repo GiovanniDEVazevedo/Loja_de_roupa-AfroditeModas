@@ -1,113 +1,111 @@
 
 import Produto from"../database/models/produto.js"
+import AppError from "../errors/AppError.js";
+import { ok, created } from "../utils/response.js";
 
   export default {
   listarProdutos: async (req, res) => {
-    try {
+    
       const produtos = await Produto.buscarTodos();
 
       // Aqui criamos a lógica de disponibilidade NO BACK
-      const produtosComStatus = produtos.map(produto => {
-        return {
-          ...produto,
-          disponivel: produto.estoque > 0 // true ou false
-        };
-      });
+      const produtosComStatus = produtos.map(p => ({
+        id: p.id,
+        nome: p.nome,
+        preco: p.preco,
+        imagem: p.imagem_url,
+        estoque: p.estoque,
+        categoria: p.categoria_id,
+        disponivel: p.estoque > 0
 
-      return res.status(200).json(produtosComStatus);
 
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ erro: "Erro ao buscar produtos" });
-    }
+      })
+        
+      
+      );
+
+      return ok(res, produtosComStatus)
+
+   
   
 
     },
     async buscarID(req, res) {
-        try {
+        
             const { id } = req.params
             const produto = await Produto.buscarPorId(id)
 
             if (!produto) {
-                return res.status(404).json({erro: "produto nao encontrado"})
+                throw new AppError("produto nao encontrado", 404)
             }
-            return res.json(produto)
-        }
-        catch (erro) {
-            console.error("Erro ao buscar produto:", erro)
-             return res.status(500).json({ erro: "Erro ao buscar produto" });
-    
-            
-        }
+            return ok(res, produto)
+       
     },
-    async criarProduto(req, res) {
-        try {
-            const { nome, preco, descricao,  estoque, categoria } = req.body
-        if (!nome || !preco) {
-          return res.status(400).json({
-            erro: "Nome e preço são obrigatorios",
-               erros:{
-            nome,
-            preco,
-            descricao,
-            
-            estoque,
-            categoria,
-        }
-             })
-          }
-          const imagem_url = req.file
-          if (!imagem_url) {
-            return res.status(400).json({erro: "imagem obrigatória"})
-          }
-          const imagem = `/uploads/produtos/${imagem_url.filename}`
-        const novoproduto = await Produto.criar({
-            nome,
-            descricao,
-            preco,
-            estoque,
-            imagem_url: imagem,
-            categoria,
-        })
-        return res.status(201).json(novoproduto)
-        } catch (erro) {
-            console.error("Erro ao criar produto:", erro)
-            return res.status(500).json({ erro: "erro ao criar produto!!!!" })
 
-    }   
-    },
+async criarProduto(req, res) {
+  const { nome, preco, descricao, estoque, categoria } = req.body;
+
+  if (!nome || nome.trim().length < 3) {
+    throw new AppError("Nome do produto inválido", 400);
+  }
+
+  if (!preco || isNaN(preco) || Number(preco) <= 0) {
+    throw new AppError("Preço inválido", 400);
+  }
+
+  if (!req.file) {
+    throw new AppError("Imagem do produto é obrigatória", 400);
+  }
+
+  const imagem = `/uploads/produtos/${req.file.filename}`;
+
+  const novoproduto = await Produto.criar({
+    nome: nome.trim(),
+    descricao,
+    preco,
+    estoque,
+    imagem_url: imagem,
+    categoria
+  });
+
+  return created(res, novoproduto);
+},
     async atualizarProduto(req,res) {
-        try {
-            const { id } = req.params
-            const dados = req.body
+        const {nome, preco, descricao, estoque, categoria_id}  = req.body
+      if (!Number.isInteger(Number(id))) {
+              throw new AppError("ID invalido", 400)
+            }
+      const dados = {
+        nome,
+        preco,
+        descricao,
+        estoque,
+        categoria_id,
+            }
             const produtoExistente = await Produto.buscarPorId(id)
             if (!produtoExistente) {
-                return res.status(404).json({erro: "produto nao encontrado000"})
+                throw new AppError("produto nao encontrado", 404)
             }
             const produtoAtualizado = await Produto.atualizar(id, dados)
-            return res.json(produtoAtualizado)
-        } catch (erro) {
-      console.error("Erro ao atualizar produto:", erro);
-      return res.status(500).json({ erro: "Erro ao atualizar produto" });
-        }
+            return ok(res , produtoAtualizado)
+      
     },
      async deletar(req, res) {
-    try {
-      const { id } = req.params;
+    
+       if (!Number.isInteger(Number(id))) {
+         throw new AppError("ID invalido", 400)
+       }
 
       const produto = await Produto.buscarPorId(id);
 
       if (!produto) {
-        return res.status(404).json({ erro: "Produto não encontrado111" });
+        throw new AppError("Produto não encontrado", 404 );
       }
 
       await Produto.deletar(id);
 
-      return res.json({ mensagem: "Produto removido com sucesso" });
+      return ok(res, {mensagem: "Produto removido com sucesso" });
 
-    } catch (erro) {
-      console.error("Erro ao deletar produto:", erro);
-      return res.status(500).json({ erro: "Erro ao deletar produto" });
-    }
+    
   },
 }

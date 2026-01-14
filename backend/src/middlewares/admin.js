@@ -1,22 +1,19 @@
 import jwt from "jsonwebtoken"
+import AppError from "../errors/AppError"
 
 export default function admin(req, res, next) {
     const authHeader = req.headers.authorization
     
-    if (!authHeader||!authHeader.startsWith("Bearer")) {
-        return res.status(401).json({erro: "token não enviado"})
+    if (!authHeader || !authHeader.startsWith("Bearer")) {
+        throw new AppError("token não enviado", 403)
     }
     const token = authHeader.split(" ")[1]
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        if (decoded.cargo !== "admin") {
-            return res.status(403).json({erro: "acesso negado. apenas Admin"})
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    if (decoded.cargo !== "admin") {
+        throw new AppError("acesso negado. apenas Admin", 403)
             
-        }
-        req.usuario = decoded
-        next()
-
-    } catch (error) {
-        return res.status(401).json({erro: "Token invalido"})
     }
+    req.usuario = decoded
+    next()
 }

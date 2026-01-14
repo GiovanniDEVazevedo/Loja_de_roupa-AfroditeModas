@@ -2,14 +2,14 @@ import pool from "../connection.js";
 
 class Usuario {
   static async criar(Usuario) {
-    const { nome, email, senha, cargo } = Usuario
+    const { nome, email, senha_hash, cargo } = Usuario
     const { rows } = await pool.query(
       `
       INSERT INTO produtos(nome, email, senha, cargo)
       VALUES($1, $2, $3, $4)
       RETURNING *
       `, 
-      [nome, email, senha, cargo]
+      [nome, email, senha_hash, cargo]
     )
     return rows[0]
   }

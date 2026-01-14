@@ -8,6 +8,7 @@ import db from "./src/database/connection.js";
 import usuarioRoutes from "./src/routes/usuariosRoutes.js";
 import categoriaRoutes from "./src/routes/categoriasRoutes.js";
 import produtoRoutes from "./src/routes/produtosRoutes.js";
+import erroHandler from "./src/middlewares/errorHandler.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(erroHandler)
 
 // Teste da API
 app.get("/", (req, res) => {
