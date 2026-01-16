@@ -79,6 +79,14 @@ class Produto {
       [id]
     )
     return true
-    }
+  }
+  static async diminuirEstoque(id , quantidade ) {
+    const { rowCont } = await pool.query(
+      `UPDATE produtos
+      SET estoque = estoque - $1
+      WHERE id = $2 AND estoque >= $1`, 
+      [quantidade, id]
+    )
+  }
 }
  export default Produto
