@@ -9,6 +9,7 @@ import usuarioRoutes from "./src/routes/usuariosRoutes.js";
 import categoriaRoutes from "./src/routes/categoriasRoutes.js";
 import produtoRoutes from "./src/routes/produtosRoutes.js";
 import erroHandler from "./src/middlewares/errorHandler.js";
+import PedidosRoutes from "./src/routes/PedidosRoutes.js";
 
 dotenv.config();
 
@@ -25,9 +26,11 @@ app.get("/", (req, res) => {
 });
 
 // Rotas principais
+
 app.use("/usuarios", usuarioRoutes);
 app.use("/categorias", categoriaRoutes);
 app.use("/produtos", produtoRoutes);
+app.use("/pedidos", PedidosRoutes)
 //Middleware de erros 
 app.use(erroHandler)
 // Verificar conexão MySQL

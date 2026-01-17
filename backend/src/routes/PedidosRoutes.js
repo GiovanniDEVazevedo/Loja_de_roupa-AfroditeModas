@@ -4,4 +4,4 @@ import router from "./usuariosRoutes";
 
 
 
-router.post("/pedidos", auth, PedidosControllers.criar)
+router.post("/pedidos", auth, PedidosControllers.criarPedido)
