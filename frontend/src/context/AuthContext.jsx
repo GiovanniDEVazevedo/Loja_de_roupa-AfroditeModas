@@ -14,16 +14,17 @@ export function AuthProvider({ children }) {
     setLoading(false); // Terminou de ler do localStorage
   }, []);
 
-  function login(dados) {
-    setUsuario(dados);
-    localStorage.setItem("usuario", JSON.stringify(dados));
-    // Se o seu backend retorna o token dentro de dados.usuario:
-    if (dados.token) localStorage.setItem("token", dados.token);
+  function login(usuario) {
+    setUsuario(usuario);
+    localStorage.setItem("usuario", JSON.stringify(usuario));
+    
+  
   }
 
   function logout() {
     setUsuario(null);
-    localStorage.clear();
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token")
   }
 
   const isAutenticado = !!usuario;

@@ -1,43 +1,74 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-const CartContext = createContext()
-
+const CartContext = createContext();
 
 // eslint-disable-next-line react/prop-types
 export function CartProvider({ children }) {
-    const [cart, setCart] = useState([])
-    
-    //add itens
-    function AddTocart(product) {
-        const exist = cart.find((item) => item.id === product.id)
-        
-        if (exist) {
-            return setCart(
-                cart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantidade: item.quantidade + 1 }
-                        : item
-                    )
-            )
-        }
-        setCart([...cart, { ...product, quantidade:1}])
+  const [cart, setCart] = useState([]);
+
+  // carrega carrinho do localStorage
+  useEffect(() => {
+    const carrinhoSalvo = localStorage.getItem("cart");
+    if (carrinhoSalvo) {
+      setCart(JSON.parse(carrinhoSalvo));
     }
-    //deletar item
-    function removeFromCart(id) {
-        setCart(cart.filter((item)=> item.id !== id))
+  }, []);
+
+  // salva carrinho sempre que mudar
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  function addToCart(produtoId) {
+    setCart((prev) => {
+      const exist = prev.find((item) => item.produtoId === produtoId);
+
+      if (exist) {
+        return prev.map((item) =>
+          item.produtoId === produtoId
+            ? { ...item, quantidade: item.quantidade + 1 }
+            : item
+        );
+      }
+
+      return [...prev, { produtoId, quantidade: 1 }];
+    });
+  }
+
+  function updateQuantity(produtoId, quantidade) {
+    if (quantidade <= 0) {
+      return removeFromCart(produtoId);
     }
-    //limpar selecao
-    function clearCart() {
-        setCart([])
-    }
-    return (
-        <CartContext.Provider value={{ cart, AddTocart, removeFromCart, clearCart }}>
-            {children}
-        </CartContext.Provider>
-    )
+
+    setCart((prev) =>
+      prev.map((item) =>
+        item.produtoId === produtoId
+          ? { ...item, quantidade }
+          : item
+      )
+    );
+  }
+
+  function removeFromCart(produtoId) {
+    setCart((prev) =>
+      prev.filter((item) => item.produtoId !== produtoId)
+    );
+  }
+
+  function clearCart() {
+    setCart([]);
+    localStorage.removeItem("cart");
+  }
+
+  return (
+    <CartContext.Provider
+      value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
 
 export function UseCart() {
-        return useContext(CartContext)
-    }
-    
+  return useContext(CartContext);
+}
