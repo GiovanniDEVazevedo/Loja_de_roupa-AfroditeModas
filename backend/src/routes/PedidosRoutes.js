@@ -5,3 +5,5 @@ import router from "./usuariosRoutes.js";
 
 
 router.post("/pedidos", auth, PedidosControllers.criarPedido)
+
+export default router
