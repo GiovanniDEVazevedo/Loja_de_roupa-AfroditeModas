@@ -1,7 +1,7 @@
 import AppError from "../errors/AppError.js";
 
 export default function erroHandler(err, req, res, next) {
-    if (err.isAppError) {
+    if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             success: false,
             data: null,
