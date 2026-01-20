@@ -38,7 +38,7 @@ export default {
   const novoUsuario = await Usuarios.criar({
     nome: nome.trim(),
     email: email.toLowerCase(),
-    senhaHash,
+    senha: senhaHash,
     cargo: "user"
   });
 
