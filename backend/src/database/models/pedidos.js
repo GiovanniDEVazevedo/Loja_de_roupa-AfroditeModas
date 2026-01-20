@@ -45,7 +45,7 @@ class Pedidos {
 
   static async buscarItensDoPedido(pedido_id) {
     const { rows } = await pool.query(
-      `SELECT * FROM pedidos_itens WHERE pedido_id = $1`,
+      `SELECT * FROM pedido_itens WHERE pedido_id = $1`,
       [pedido_id]
     );
     return rows;

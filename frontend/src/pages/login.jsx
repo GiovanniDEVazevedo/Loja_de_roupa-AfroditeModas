@@ -12,7 +12,7 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            const resposta = await fetch("http://localhost:3001/usuarios/login", {
+            const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/usuarios/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, senha })

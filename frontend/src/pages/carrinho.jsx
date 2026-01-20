@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { UseCart } from "../context/CartContext";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Carrinho() {
     const { cart, updateQuantity, removeFromCart, clearCart } = UseCart()
     const [produtos, setProdutos] = useState([])
-    const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
     useEffect(() => {
         async function carregarProdutos() {
@@ -37,18 +39,7 @@ export default function Carrinho() {
     const total = itensDetalhados.reduce(
         (acc, item )=> acc + item.subtotal
     )
-    function FinalizarWhatsApp() {
-        const mensagem = itensDetalhados
-            .map(
-                (item) =>
-                    `${item.produto.nome} - ${item.quantidade} - R$ ${item.produto.preco}` 
-        )
-            .join("\n")
-        const texto = `Olá! Quero finalizar a compra: \n\n${mensagem}\n\nTotal: R$ ${total}`
-
-        const url = `https://wa.me/55094992076075?text=${encodeURIComponent(texto)}`
-        window.open(url, "_blank")
-    }
+    
      return (
     <div>
       <h1>Carrinho</h1>
@@ -86,8 +77,8 @@ export default function Carrinho() {
 
       <h3>Total: R$ {total}</h3>
 
-      <button onClick={FinalizarWhatsApp}>
-        Finalizar pelo WhatsApp
+      <button onClick={()=> navigate("/checkout")}>
+        Finalizar compra
       </button>
 
       <button onClick={clearCart}>Limpar carrinho</button>

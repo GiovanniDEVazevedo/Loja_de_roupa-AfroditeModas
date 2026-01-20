@@ -8,7 +8,7 @@ export default function CriarCategoria() {
 
         const token = localStorage.getItem("token")
         try {
-            const resposta = await fetch("http://localhost:3001/categorias/criar", {
+            const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/categorias/criar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

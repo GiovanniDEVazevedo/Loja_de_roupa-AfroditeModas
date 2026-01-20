@@ -25,7 +25,7 @@ export default function GerenciarProdutos() {
             formData.append("imagem_url", imagem_url)
             formData.append("categoria", categoriaID)
             
-            const resposta = await fetch("http://localhost:3001/produtos/criar", {
+            const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/produtos/criar", {
                 method: "POST",
                  headers:{
                 "Authorization": `Bearer ${token}`
@@ -47,7 +47,7 @@ export default function GerenciarProdutos() {
     
     async function ListarCategoria() {
         try {
-            const resposta = await fetch("http://localhost:3001/categorias", {
+            const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/categorias", {
                 method: "GET",
                     headers: {
                     "Authorization": `Bearer ${token}`

@@ -5,7 +5,7 @@ class Usuario {
     const { nome, email, senha_hash, cargo } = Usuario
     const { rows } = await pool.query(
       `
-      INSERT INTO produtos(nome, email, senha, cargo)
+      INSERT INTO usuario(nome, email, senha, cargo)
       VALUES($1, $2, $3, $4)
       RETURNING *
       `, 
@@ -15,14 +15,14 @@ class Usuario {
   }
   static async buscarPorEmail(email) {
     const { rows } = await pool.query(
-      "SELECT * FROM usuarios WHERE email = $1", 
+      "SELECT * FROM usuario WHERE email = $1", 
       [email]
     )
     return rows[0]
   }
   static async buscarPorID(id) {
     const { rows } = await pool.query(
-      "SELECT id, nome, email, cargo FROM usuarios WHERE id = $1",
+      "SELECT id, nome, email, cargo FROM usuario WHERE id = $1",
       [id]
     )
     return rows[0]

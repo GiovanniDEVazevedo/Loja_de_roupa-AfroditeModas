@@ -19,19 +19,19 @@ export function CartProvider({ children }) {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  function addToCart(produtoId) {
+  function addToCart(produto) {
     setCart((prev) => {
-      const exist = prev.find((item) => item.produtoId === produtoId);
+      const exist = prev.find((item) => item.id === produto.id);
 
       if (exist) {
         return prev.map((item) =>
-          item.produtoId === produtoId
+          item.id === produto.id
             ? { ...item, quantidade: item.quantidade + 1 }
             : item
         );
       }
 
-      return [...prev, { produtoId, quantidade: 1 }];
+      return [...prev, { produto, quantidade: 1 }];
     });
   }
 
