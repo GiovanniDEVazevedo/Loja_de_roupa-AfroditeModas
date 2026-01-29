@@ -26,17 +26,18 @@ class Produto {
       preco,
       estoque,
       imagem_url,
+      imagem_public_id,
       categoria_id
     } = produto
       
     const { rows } = await pool.query(
       `
       INSERT INTO produtos
-      (nome, descricao, preco, estoque, imagem_url, categoria_id)
-      VALUES($1, $2, $3, $4, $5, $6)
+      (nome, descricao, preco, estoque, imagem_url,imagem_public_id, categoria_id)
+      VALUES($1, $2, $3, $4, $5, $6, $7)
       RETURNING * 
       `
-      ,[nome, descricao, preco, estoque, imagem_url, categoria_id]
+      ,[nome, descricao, preco, estoque, imagem_url,imagem_public_id, categoria_id]
     )
     return rows[0]
   }
@@ -47,6 +48,7 @@ class Produto {
       preco,
       estoque,
       imagem_url,
+      imagem_public_id,
       categoria_id
     } = produto
     const { rows } = await pool.query(
@@ -57,8 +59,9 @@ class Produto {
       preco = $3,
       estoque = $4,
       imagem_url = $5,
-      categoria_id = $6
-    WHERE id =$7
+      imagem_public_id = $6
+      categoria_id = $7
+    WHERE id =$8
     RETURNING *
     `,
       [
@@ -67,6 +70,7 @@ class Produto {
         preco,
         estoque,
         imagem_url,
+        imagem_public_id,
         categoria_id,
         id
       ]
