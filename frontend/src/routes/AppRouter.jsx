@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import AdminRoute from "./AdminRoute";
-import PrivateRoute from "../auth/PrivateRoute";
+import PrivateRoute from "./privateRoutes.jsx"
 
 import Login from "../pages/login.jsx";
 import Catalogo from "../pages/catalogo.jsx";

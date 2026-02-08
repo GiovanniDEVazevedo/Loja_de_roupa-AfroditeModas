@@ -5,7 +5,7 @@ import admin from "../middlewares/admin.js";
 const router = Router();
 
 // Listar todas categorias
-router.get("/", admin,CategoriasController.ListarCategorias);
+router.get("/", CategoriasController.ListarCategorias);
 
 // Buscar uma categoria pelo ID
 router.get("/buscar/:id", CategoriasController.buscarIdCategoria);
