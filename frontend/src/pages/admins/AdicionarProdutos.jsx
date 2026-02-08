@@ -35,7 +35,8 @@ export default function GerenciarProdutos() {
             })
             const dados = await resposta.json()
             if (!resposta.ok) {
-                alert(dados.erro|| "erro ao criar Produto")
+                alert(dados.erro || "erro ao criar Produto")
+                return
             }
         }catch(error){
             console.error("erro ao criar produto", error)
@@ -43,26 +44,28 @@ export default function GerenciarProdutos() {
         }
         alert("Produto criado com sucesso!!!")
     }useEffect(() => {
-        
-    
-    async function ListarCategoria() {
+    async function listarCategoria() {
         try {
             const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/categorias", {
-                method: "GET",
-                    headers: {
-                    "Authorization": `Bearer ${token}`
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             })
-            const dados = await resposta.json()
-            SetCategoria(Array.isArray(dados)? dados : [])
+            const json = await resposta.json()
 
-        } catch(error) {
-            console.error("erro ao tentar listar as categorias ", error)
+if (json.success && Array.isArray(json.data)) {
+    SetCategoria(json.data)
+} else {
+    SetCategoria([])
+    console.error("Formato inesperado de resposta", json)
+}
+        } catch (error) {
+            console.error("Erro ao listar categorias", error)
         }
-        }
-        ListarCategoria()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[]) 
+    }
+
+    if (token) listarCategoria()
+}, [token])
     return (
         
         <div>

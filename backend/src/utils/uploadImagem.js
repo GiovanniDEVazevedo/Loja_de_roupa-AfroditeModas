@@ -17,7 +17,7 @@ export default async function uploadImagem(file, folder ="geral" ) {
               ).end(file.buffer)
           })
           return {
-              url: result.secure_url,
+              imagem_url: result.secure_url,
               public_id: result.public_id
           }
       } catch (err) {
