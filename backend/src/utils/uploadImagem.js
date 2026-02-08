@@ -1,5 +1,5 @@
-import cloudinary from "../config/cloudinary";
-import AppError from "../errors/AppError";
+import cloudinary from "../config/cloudinary.js";
+import AppError from "../errors/AppError.js";
 
 
 export default async function uploadImagem(file, folder ="geral" ) {
