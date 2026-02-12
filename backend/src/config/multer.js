@@ -1,4 +1,4 @@
-import multer from "multer";
+import multer, { memoryStorage } from "multer";
 
 const storage = multer.memoryStorage();
 
@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 export default multer({
-  storage,
+  storage:memoryStorage(),
   fileFilter,
   limits: {
     fileSize: 2 * 1024 * 1024 // 2MB (obrigatório em prod)
