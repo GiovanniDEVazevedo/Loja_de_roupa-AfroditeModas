@@ -21,7 +21,8 @@ export default async function uploadImagem(file, folder ="geral" ) {
               public_id: result.public_id
           }
       } catch (err) {
-        throw new AppError("Erro ao enviar imagem", 500)
+        console.error("erro cloud",err)
+          throw new AppError("Erro ao enviar imagem", 500)
       }  
     
 
