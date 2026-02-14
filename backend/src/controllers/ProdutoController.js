@@ -61,7 +61,7 @@ async criarProduto(req, res, next) {
     }
 
   
-    console.log(req.file)
+    
     const imagem = await uploadImagem(req.file, "produtos");
 
     const novoproduto = await Produto.criar({
@@ -69,7 +69,7 @@ async criarProduto(req, res, next) {
       descricao,
       preco,
       estoque,
-      imagem_url: imagem.secure_url,
+      imagem_url: imagem.imagem_url,
       imagem_public_id: imagem.public_id,
       categoria
     });
