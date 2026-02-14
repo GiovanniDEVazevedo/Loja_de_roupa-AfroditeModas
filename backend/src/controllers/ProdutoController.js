@@ -60,9 +60,11 @@ async criarProduto(req, res, next) {
       throw new AppError("Imagem do produto é obrigatória", 400);
     }
 
-  
+    console.log(req.file)
+    console.log(req.body)
     
     const imagem = await uploadImagem(req.file, "produtos");
+    console.log("uploud: ",imagem)
 
     const novoproduto = await Produto.criar({
       nome: nome.trim(),

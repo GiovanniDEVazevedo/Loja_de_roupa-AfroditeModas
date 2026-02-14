@@ -11,7 +11,11 @@ export default function Catalogo() {
       try {
         const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/produtos/listar");
         const dados = await resposta.json();
-        setProdutos(dados);
+        if (dados.success) {
+          setProdutos(dados.data);
+        } else {
+          console.error(dados.error)
+        }
       } catch (error) {
         console.error("Erro ao carregar produtos", error);
       } finally {
@@ -32,7 +36,7 @@ export default function Catalogo() {
         {produtos.map((prod) => (
           <div key={prod.id}>
             <img
-              src={`https://loja-de-roupa-afroditemodas-backend.onrender.com${prod.imagem_url}`}
+              src={prod.imagem_url}
               alt={prod.nome}
             />
             <h3>{prod.nome}</h3>

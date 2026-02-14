@@ -23,7 +23,7 @@ export default function GerenciarProdutos() {
             formData.append("preco", preco)
             formData.append("estoque", estoque)
             formData.append("imagem_url", imagem_url)
-            formData.append("categoria", categoriaID)
+            formData.append("categoria_id", categoriaID)
             
             const resposta = await fetch("https://loja-de-roupa-afroditemodas-backend.onrender.com/produtos/criar", {
                 method: "POST",
