@@ -8,7 +8,7 @@ import { deletarImagem } from "../utils/uploadImagem.js";
   export default {
   listarProdutos: async (req, res) => {
     
-      const produtos = await Produto.buscarTodos();
+      const produtos = await Produto.listar();
 
       //verifica se tem produto no estoque 
       const produtosComStatus = produtos.map(p => ({
@@ -99,7 +99,7 @@ async atualizarProduto(req, res, next) {
       // sobe nova imagem
       const upload = await uploadImagem(req.file, "produtos");
 
-      dados.imagem_url = upload.secure_url;
+      dados.imagem_url = upload.imagem_url;
       dados.imagem_public_id = upload.public_id;
     }
 
