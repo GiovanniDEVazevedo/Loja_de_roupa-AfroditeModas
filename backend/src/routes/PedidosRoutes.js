@@ -4,6 +4,6 @@ import router from "./usuariosRoutes.js";
 
 
 
-router.post("/pedidos", auth, PedidosControllers.criarPedido)
+router.post("/carrinho", auth, PedidosControllers.criarPedido)
 
 export default router
