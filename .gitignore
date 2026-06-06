@@ -25,3 +25,5 @@ dist-ssr
 .env
 backend/src/database/connection.js
 backend/docker-compose.yml
+packegens.json
+backend/package-lock.json

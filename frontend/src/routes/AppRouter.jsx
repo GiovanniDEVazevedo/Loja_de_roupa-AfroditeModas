@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import AdminRoute from "./AdminRoute";
 import PrivateRoute from "./privateRoutes.jsx"
 
-import Login from "../pages/login.jsx";
+import Login from "../pages/login/login.jsx";
 import Catalogo from "../pages/catalogo.jsx";
 import Carrinho from "../pages/carrinho.jsx";
 import Checkout from "../pages/checkout.jsx";

@@ -1,42 +1,34 @@
-import { createContext, useContext, useState, useEffect } from "react";
-const AuthContext = createContext();
+/* eslint-disable react/prop-types */
+import { createContext, useContext, useState } from "react";
+import { api } from "../services/ApiContext";
 
-// eslint-disable-next-line react/prop-types
+//coloca a funcao como global 
+const AuthContext = createContext()
+
 export function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState(null);
-  const [loading, setLoading] = useState(true); // Adicione este estado!
-
-  useEffect(() => {
-    const dadosSalvos = localStorage.getItem("usuario");
-    if (dadosSalvos) {
-      setUsuario(JSON.parse(dadosSalvos));
-    }
-    setLoading(false); // Terminou de ler do localStorage
-  }, []);
-
-  function login(usuario) {
-    setUsuario(usuario);
-    localStorage.setItem("usuario", JSON.stringify(usuario));
-    
-  
+  const [user, setUser] = useState(null)
+  //faz a requisicao do login para api 
+  async function login(email, senha) {
+    const resposta = await api.post("/login", {
+      email,
+      senha,
+    })
+    //Manda o token para localStorage do navegador 
+    const{token , Usuario} = resposta.data
+    localStorage.setItem("token", token)
+    setUser({ Usuario })
+    return Usuario
   }
-
   function logout() {
-    setUsuario(null);
-    localStorage.removeItem("usuario");
     localStorage.removeItem("token")
+    setUser(null)
   }
-
-  const isAutenticado = !!usuario;
-  const isAdmin = usuario?.cargo === "admin";
-
   return (
-    <AuthContext.Provider value={{ usuario, login, logout, isAutenticado, isAdmin, loading }}>
-      {!loading && children} 
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
     </AuthContext.Provider>
-  );
+  )
 }
-
 export function UseAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
