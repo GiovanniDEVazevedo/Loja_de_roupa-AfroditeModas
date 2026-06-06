@@ -59,7 +59,7 @@ class Produto {
       preco = $3,
       estoque = $4,
       imagem_url = $5,
-      imagem_public_id = $6
+      imagem_public_id = $6,
       categoria_id = $7
     WHERE id =$8
     RETURNING *
@@ -85,12 +85,15 @@ class Produto {
     return true
   }
   static async diminuirEstoque(id , quantidade ) {
-    const { rowCont } = await pool.query(
+    const { rowCount } = await pool.query(
       `UPDATE produtos
       SET estoque = estoque - $1
       WHERE id = $2 AND estoque >= $1`, 
       [quantidade, id]
     )
+    if (rowCount === 0) {
+      throw new Error("Estoque insuficiente");
+    }
   }
 }
  export default Produto

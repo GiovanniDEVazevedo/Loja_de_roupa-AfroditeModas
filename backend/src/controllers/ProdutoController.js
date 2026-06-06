@@ -72,7 +72,7 @@ async criarProduto(req, res, next) {
       estoque,
       imagem_url: imagem.imagem_url,
       imagem_public_id: imagem.public_id,
-      categoria
+      categoria_id: categoria
     });
 
     return created(res, novoproduto);
@@ -88,6 +88,11 @@ async atualizarProduto(req, res, next) {
     const produto = await Produto.buscarPorId(id);
     if (!produto) {
       throw new AppError("Produto não encontrado", 404);
+    }
+
+    if (dados.categoria) {
+      dados.categoria_id = dados.categoria;
+      delete dados.categoria;
     }
 
     //  se veio nova imagem

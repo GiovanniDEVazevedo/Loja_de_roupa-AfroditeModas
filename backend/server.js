@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 
 import pool from "./src/database/connection.js";
@@ -15,9 +17,21 @@ dotenv.config();
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// Seguranca
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
+
+// Rate limit global
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: { success: false, data: null, error: "Muitas requisições, tente novamente mais tarde" }
+});
+app.use(globalLimiter);
 
 
 // Teste da API
@@ -25,8 +39,16 @@ app.get("/", (req, res) => {
   res.send("Backend funcionando 🚀");
 });
 
+// Rate limit especifico para login (prevenir bruteforce)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { success: false, data: null, error: "Muitas tentativas de login. Tente novamente em 15 minutos." }
+});
+
 // Rotas principais
 
+app.use("/usuarios/login", loginLimiter);
 app.use("/usuarios", usuarioRoutes);
 app.use("/categorias", categoriaRoutes);
 app.use("/produtos", produtoRoutes);

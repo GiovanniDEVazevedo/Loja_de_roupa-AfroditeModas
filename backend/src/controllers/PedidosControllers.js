@@ -6,7 +6,7 @@ import { created, ok } from "../utils/response.js";
 export default {
 
   async criarPedido(req, res) {
-    const usuario_id = req.user.id;
+    const usuario_id = req.usuario.id;
     const { itens } = req.body;
 
     if (!itens || itens.length === 0) {
@@ -47,9 +47,9 @@ export default {
         preco: produto.preco
       });
 
-      await Produto.atualizarEstoque(
+      await Produto.diminuirEstoque(
         produto.id,
-        produto.estoque - item.quantidade
+        item.quantidade
       );
     }
 
@@ -57,7 +57,7 @@ export default {
   },
 
   async listarMeusPedidos(req, res) {
-    const usuario_id = req.user.id;
+    const usuario_id = req.usuario.id;
     const pedidos = await Pedidos.buscarPorUsuario(usuario_id);
     return ok(res, pedidos);
   },

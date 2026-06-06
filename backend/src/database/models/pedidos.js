@@ -17,7 +17,7 @@ class Pedidos {
   static async adicionarItem({ pedido_id, produto_id, quantidade, preco }) {
     const { rows } = await pool.query(
       `
-      INSERT INTO pedidos_itens 
+      INSERT INTO pedido_itens 
       (pedido_id, produto_id, quantidade, preco_unitario)
       VALUES ($1, $2, $3, $4)
       RETURNING *
@@ -29,7 +29,7 @@ class Pedidos {
 
   static async buscarPorUsuario(usuario_id) {
     const { rows } = await pool.query(
-      `SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY created_at DESC`,
+      `SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY criado_em DESC`,
       [usuario_id]
     );
     return rows;

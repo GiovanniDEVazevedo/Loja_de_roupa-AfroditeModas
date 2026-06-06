@@ -23,8 +23,8 @@ class Categoria{
   }
   static async atualizar(id, nome) {
     const { rowCount } = await pool.query(
-      "UPDATE categorias SET nome = $1 id = $2",
-      [id, nome]
+      "UPDATE categorias SET nome = $1 WHERE id = $2",
+      [nome, id]
     )
     return rowCount > 0
   }

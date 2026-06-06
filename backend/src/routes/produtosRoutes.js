@@ -15,7 +15,7 @@ router.get("/buscar/:id", ProdutoController.buscarID);
 router.post("/criar",admin,upload.single("imagem_url") , ProdutoController.criarProduto);
 
 // Atualizar produto (ADM)
-router.put("/:id",admin, ProdutoController.atualizarProduto);
+router.put("/:id",admin, upload.single("imagem_url"), ProdutoController.atualizarProduto);
 
 // Deletar produto (ADM)
 router.delete("/:id",admin, ProdutoController.deletar);

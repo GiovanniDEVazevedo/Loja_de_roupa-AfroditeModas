@@ -3,6 +3,7 @@ import jwt  from "jsonwebtoken";
 import Usuarios from "../database/models/Usuario.js";
 import dotenv from "dotenv"
 import AppError from "../errors/AppError.js";
+import { badRequest, created } from "../utils/response.js";
 
 dotenv.config()
 // chave secreta do JWT (ideal colocar no .env)
@@ -39,7 +40,7 @@ export default {
     nome: nome.trim(),
     email: email.toLowerCase(),
     senha: senhaHash,
-    cargo: "user"
+    cargo: "cliente"
   });
 
   return created(res, novoUsuario);
