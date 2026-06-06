@@ -41,39 +41,25 @@ class Produto {
     )
     return rows[0]
   }
-  static async atualizar(id, produto) {
-    const {
-      nome,
-      descricao,
-      preco,
-      estoque,
-      imagem_url,
-      imagem_public_id,
-      categoria_id
-    } = produto
+  static async atualizar(id, dados) {
+    const colunas = ['nome', 'descricao', 'preco', 'estoque', 'imagem_url', 'imagem_public_id', 'categoria_id']
+    const sets = []
+    const valores = []
+    let idx = 1
+
+    for (const col of colunas) {
+      if (dados[col] !== undefined) {
+        sets.push(`${col} = $${idx++}`)
+        valores.push(dados[col])
+      }
+    }
+
+    if (sets.length === 0) return null
+
+    valores.push(id)
     const { rows } = await pool.query(
-      `UPDATE produtos
-      SET
-      nome = $1,
-      descricao = $2,
-      preco = $3,
-      estoque = $4,
-      imagem_url = $5,
-      imagem_public_id = $6,
-      categoria_id = $7
-    WHERE id =$8
-    RETURNING *
-    `,
-      [
-        nome,
-        descricao,
-        preco,
-        estoque,
-        imagem_url,
-        imagem_public_id,
-        categoria_id,
-        id
-      ]
+      `UPDATE produtos SET ${sets.join(', ')} WHERE id = $${idx} RETURNING *`,
+      valores
     )
     return rows[0]
   }
