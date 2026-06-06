@@ -12,6 +12,7 @@ import categoriaRoutes from "./src/routes/categoriasRoutes.js";
 import produtoRoutes from "./src/routes/produtosRoutes.js";
 import erroHandler from "./src/middlewares/errorHandler.js";
 import PedidosRoutes from "./src/routes/PedidosRoutes.js";
+import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use("/usuarios", usuarioRoutes);
 app.use("/categorias", categoriaRoutes);
 app.use("/produtos", produtoRoutes);
 app.use("/pedidos", PedidosRoutes)
+app.use("/dashboard", dashboardRoutes)
 //Middleware de erros 
 app.use(erroHandler)
 // Verificar conexão MySQL
