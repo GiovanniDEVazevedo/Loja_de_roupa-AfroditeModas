@@ -1,11 +1,11 @@
 # 🛍️ Afrodite Modas
 
-Sistema completo de e-commerce com backend em Node.js + Express + PostgreSQL (Neon) e frontend em React + Vite.
+Backend de e-commerce em Node.js + Express + PostgreSQL (Neon).
 
 ## 🚀 Demonstração
 
 🔗 **Backend API:** https://loja-de-roupa-afroditemodas-backend.onrender.com  
-🔗 **Frontend:** (em desenvolvimento)
+🔗 **Frontend:** (desenvolvimento separado)
 
 ---
 
@@ -28,7 +28,7 @@ Sistema completo de e-commerce com backend em Node.js + Express + PostgreSQL (Ne
 | Backend  | Node.js, Express 5, PostgreSQL (Neon), JWT, bcrypt |
 | Upload   | Multer (memoryStorage), Cloudinary |
 | Segurança| Helmet, express-rate-limit, CORS |
-| Frontend | React 18, Vite, React Router v7, Axios, Zustand |
+| Frontend | (separado — React + Vite) |
 
 ---
 
@@ -198,27 +198,6 @@ cp .env.example .env    # configure suas variáveis
 npm install
 npm run dev             # nodemon com reload automático
 ```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev             # Vite em http://localhost:5173
-```
-
----
-
-## 🛒 Frontend
-
-O frontend React está em `frontend/` e inclui:
-
-- Páginas: catálogo, login, cadastro, carrinho, checkout, admin
-- Autenticação com `AuthContext` (localStorage + JWT)
-- Carrinho com `CartContext` (persistência local)
-- Rotas públicas, privadas e admin
-- Axios configurado com interceptador de token
-- Dashboard admin integrado com `GET /dashboard`
 
 ---
 
