@@ -27,6 +27,32 @@ class Pedidos {
     return rows[0];
   }
 
+  static async buscarTodos() {
+    const { rows } = await pool.query(`
+      SELECT
+        p.id, p.usuario_id, p.total, p.status, p.criado_em,
+        u.nome AS usuario_nome,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'produto_id', pi.produto_id,
+              'produto_nome', pr.nome,
+              'quantidade', pi.quantidade,
+              'preco_unitario', pi.preco_unitario
+            )
+          ) FILTER (WHERE pi.id IS NOT NULL),
+          '[]'
+        ) AS itens
+      FROM pedidos p
+      LEFT JOIN usuario u ON u.id = p.usuario_id
+      LEFT JOIN pedido_itens pi ON pi.pedido_id = p.id
+      LEFT JOIN produtos pr ON pr.id = pi.produto_id
+      GROUP BY p.id, u.nome
+      ORDER BY p.criado_em DESC
+    `)
+    return rows
+  }
+
   static async buscarPorUsuario(usuario_id) {
     const { rows } = await pool.query(
       `SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY criado_em DESC`,

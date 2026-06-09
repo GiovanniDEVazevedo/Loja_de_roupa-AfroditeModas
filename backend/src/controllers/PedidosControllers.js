@@ -71,6 +71,11 @@ export default {
     return created(res, { pedido, whatsapp_link });
   },
 
+  async listarTodosPedidos(req, res) {
+    const pedidos = await Pedidos.buscarTodos();
+    return ok(res, pedidos);
+  },
+
   async listarMeusPedidos(req, res) {
     const usuario_id = req.usuario.id;
     const pedidos = await Pedidos.buscarPorUsuario(usuario_id);
