@@ -8,14 +8,15 @@ export default {
   async criarPedido(req, res) {
     const usuario_id = req.usuario.id;
     const { itens } = req.body;
+    const adminWhatsApp = process.env.ADMIN_WHATSAPP;
 
     if (!itens || itens.length === 0) {
       throw new AppError("Pedido precisa ter itens", 400);
     }
 
     let total = 0;
+    const produtosInfo = [];
 
-    // 1. Validar produtos e estoque
     for (const item of itens) {
       const produto = await Produto.buscarPorId(item.produto_id);
 
@@ -30,13 +31,12 @@ export default {
         );
       }
 
-      total += produto.preco * item.quantidade;
+      total += Number(produto.preco) * item.quantidade;
+      produtosInfo.push({ nome: produto.nome, quantidade: item.quantidade, preco: produto.preco });
     }
 
-    // 2. Criar pedido
     const pedido = await Pedidos.criar({ usuario_id, total });
 
-    // 3. Criar itens e baixar estoque
     for (const item of itens) {
       const produto = await Produto.buscarPorId(item.produto_id);
 
@@ -47,13 +47,28 @@ export default {
         preco: produto.preco
       });
 
-      await Produto.diminuirEstoque(
-        produto.id,
-        item.quantidade
-      );
+      await Produto.diminuirEstoque(produto.id, item.quantidade);
     }
 
-    return created(res, pedido);
+    let whatsapp_link = null;
+    if (adminWhatsApp) {
+      const linhaPedido = produtosInfo
+        .map(i => `• ${i.nome} x${i.quantidade} = R$ ${(Number(i.preco) * i.quantidade).toFixed(2)}`)
+        .join("\n");
+
+      const mensagem = [
+        `🛍️ *Novo Pedido #${pedido.id}*`,
+        `👤 *Cliente:* ${req.usuario.nome}`,
+        ``,
+        `${linhaPedido}`,
+        ``,
+        `💰 *Total: R$ ${total.toFixed(2)}*`
+      ].join("\n");
+
+      whatsapp_link = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+    }
+
+    return created(res, { pedido, whatsapp_link });
   },
 
   async listarMeusPedidos(req, res) {
@@ -73,6 +88,23 @@ export default {
     const itens = await Pedidos.buscarItensDoPedido(id);
 
     return ok(res, { pedido, itens });
+  },
+
+  async atualizarStatus(req, res) {
+    const { id } = req.params;
+    const { status } = req.body;
+    const statusValidos = ["pendente", "confirmado", "preparando", "enviado", "entregue", "cancelado"];
+
+    if (!statusValidos.includes(status)) {
+      throw new AppError(`Status inválido. Valores aceitos: ${statusValidos.join(", ")}`, 400);
+    }
+
+    const pedido = await Pedidos.atualizarStatus(id, status);
+    if (!pedido) {
+      throw new AppError("Pedido não encontrado", 404);
+    }
+
+    return ok(res, pedido);
   }
 
 };
