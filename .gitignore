@@ -1,29 +1,79 @@
-# Logs
-logs
-*.log
+# --------------------
+# Node
+# --------------------
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+.pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# --------------------
+# Environment
+# --------------------
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
 
-# Editor directories and files
+# --------------------
+# Build / Dist
+# --------------------
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# --------------------
+# Logs
+# --------------------
+logs/
+*.log
+
+# --------------------
+# OS
+# --------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# --------------------
+# IDE / Editor
+# --------------------
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/settings.json
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.env
-backend/src/database/connection.js
-backend/docker-compose.yml
-packegens.json
-backend/package-lock.json
+
+# --------------------
+# Uploads (conteudo gerado pelo usuario)
+# --------------------
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# --------------------
+# Docker
+# --------------------
+docker-compose.override.yml
+
+# --------------------
+# Test / Coverage
+# --------------------
+coverage/
+.nyc_output/
+
+# --------------------
+# Misc
+# --------------------
+*.pem
+.secrets
+tmp/
+temp/
