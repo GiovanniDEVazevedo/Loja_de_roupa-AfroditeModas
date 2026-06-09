@@ -3,7 +3,7 @@ import jwt  from "jsonwebtoken";
 import Usuarios from "../database/models/Usuario.js";
 import dotenv from "dotenv"
 import AppError from "../errors/AppError.js";
-import { badRequest, created } from "../utils/response.js";
+import { badRequest, created, ok, notFound } from "../utils/response.js";
 
 dotenv.config()
 // chave secreta do JWT (ideal colocar no .env)
@@ -89,6 +89,46 @@ export default {
 
         
     },
-    
+
+    // ================================
+    //     ATUALIZAR PERFIL
+    // ================================
+    async atualizar(req, res) {
+      const { id } = req.usuario
+      const { nome, email } = req.body
+
+      if (!nome || nome.trim().length < 3) {
+        return badRequest(res, "Nome inválido")
+      }
+      if (!email || !email.includes("@")) {
+        return badRequest(res, "Email inválido")
+      }
+
+      const usuarioExistente = await Usuarios.buscarPorEmail(email)
+      if (usuarioExistente && usuarioExistente.id !== id) {
+        return badRequest(res, "Email já está em uso")
+      }
+
+      const usuarioAtualizado = await Usuarios.atualizar(id, { nome: nome.trim(), email: email.toLowerCase() })
+      if (!usuarioAtualizado) {
+        return notFound(res, "Usuário não encontrado")
+      }
+
+      return ok(res, usuarioAtualizado)
+    },
+
+    // ================================
+    //     EXCLUIR CONTA
+    // ================================
+    async excluir(req, res) {
+      const { id } = req.usuario
+
+      const usuarioDeletado = await Usuarios.excluir(id)
+      if (!usuarioDeletado) {
+        return notFound(res, "Usuário não encontrado")
+      }
+
+      return ok(res, { mensagem: "Conta excluída com sucesso" })
+    },
 
 }

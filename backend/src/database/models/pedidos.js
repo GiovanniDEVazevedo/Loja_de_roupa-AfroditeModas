@@ -30,7 +30,7 @@ class Pedidos {
   static async buscarTodos() {
     const { rows } = await pool.query(`
       SELECT
-        p.id, p.usuario_id, p.total, p.status, p.criado_em,
+        p.id, p.usuario_id, p.total::float8, p.status, p.criado_em,
         u.nome AS usuario_nome,
         COALESCE(
           json_agg(
@@ -38,7 +38,7 @@ class Pedidos {
               'produto_id', pi.produto_id,
               'produto_nome', pr.nome,
               'quantidade', pi.quantidade,
-              'preco_unitario', pi.preco_unitario
+              'preco_unitario', pi.preco_unitario::float8
             )
           ) FILTER (WHERE pi.id IS NOT NULL),
           '[]'
@@ -54,16 +54,38 @@ class Pedidos {
   }
 
   static async buscarPorUsuario(usuario_id) {
-    const { rows } = await pool.query(
-      `SELECT * FROM pedidos WHERE usuario_id = $1 ORDER BY criado_em DESC`,
-      [usuario_id]
-    );
+    const { rows } = await pool.query(`
+      SELECT
+        p.id, p.usuario_id, p.total::float8, p.status, p.criado_em,
+        u.nome AS usuario_nome,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'produto_id', pi.produto_id,
+              'produto_nome', pr.nome,
+              'quantidade', pi.quantidade,
+              'preco_unitario', pi.preco_unitario::float8
+            )
+          ) FILTER (WHERE pi.id IS NOT NULL),
+          '[]'
+        ) AS itens
+      FROM pedidos p
+      LEFT JOIN usuario u ON u.id = p.usuario_id
+      LEFT JOIN pedido_itens pi ON pi.pedido_id = p.id
+      LEFT JOIN produtos pr ON pr.id = pi.produto_id
+      WHERE p.usuario_id = $1
+      GROUP BY p.id, u.nome
+      ORDER BY p.criado_em DESC
+    `, [usuario_id]);
     return rows;
   }
 
   static async buscarPedidoPorId(id) {
     const { rows } = await pool.query(
-      `SELECT * FROM pedidos WHERE id = $1`,
+      `SELECT p.*, u.nome AS usuario_nome
+       FROM pedidos p
+       LEFT JOIN usuario u ON u.id = p.usuario_id
+       WHERE p.id = $1`,
       [id]
     );
     return rows[0];
@@ -71,7 +93,8 @@ class Pedidos {
 
   static async buscarItensDoPedido(pedido_id) {
     const { rows } = await pool.query(
-      `SELECT * FROM pedido_itens WHERE pedido_id = $1`,
+      `SELECT id, pedido_id, produto_id, quantidade, preco_unitario::float8 AS preco_unitario
+       FROM pedido_itens WHERE pedido_id = $1`,
       [pedido_id]
     );
     return rows;

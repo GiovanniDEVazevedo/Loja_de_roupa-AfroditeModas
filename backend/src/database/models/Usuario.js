@@ -27,5 +27,20 @@ class Usuario {
     )
     return rows[0]
   }
+  static async atualizar(id, dados) {
+    const { nome, email } = dados
+    const { rows } = await pool.query(
+      `UPDATE usuario SET nome = $1, email = $2 WHERE id = $3 RETURNING id, nome, email, cargo`,
+      [nome, email, id]
+    )
+    return rows[0]
+  }
+  static async excluir(id) {
+    const { rows } = await pool.query(
+      `DELETE FROM usuario WHERE id = $1 RETURNING id`,
+      [id]
+    )
+    return rows[0]
+  }
 }
 export default Usuario
